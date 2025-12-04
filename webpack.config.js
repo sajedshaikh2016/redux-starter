@@ -12,5 +12,6 @@ module.exports = {
     },
     port: 3000,
   },
+  devtool: "inline-source-map",
   mode: "development",
 };

@@ -1,35 +1,10 @@
-// Action Types
-const ADD_TASK = "ADD_TASK";
-const REMOVE_TASK = "REMOVE_TASK";
-const COMPLETE_TASK = "COMPLETE_TASK";
+import { createAction, createReducer } from "@reduxjs/toolkit";
 
-// Actions
-const addTask = (task) => {
-    return {
-        type: ADD_TASK,
-        payload: {
-            task: task
-        }
-    }
-}
+const addTask = createAction("ADD_TASK");
+const removeTask = createAction("REMOVE_TASK");
+const completeTask = createAction("TASK_COMPLETED");
+console.log(addTask.type)
 
-const removeTask = (id) => {
-    return {
-        type: REMOVE_TASK,
-        payload: {
-            id: id
-        }
-    }
-}
-
-const completeTask = (id) => {
-    return {
-        type: COMPLETE_TASK,
-        payload: {
-            id: id
-        }
-    }
-}
 
 const fetchTodos = () => async (dispatch, getState) => {
     const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
@@ -42,26 +17,26 @@ export { addTask, removeTask, completeTask, fetchTodos };
 
 // Reducer
 let id = 0;
-export default function reducer(state = [], action) { 
-    switch (action.type) {
-        case ADD_TASK:
-            return [
-                ...state,
-                {
-                    id: ++id,
-                    task: action.payload.task,
-                    completed: false
-                }
-            ];
-        case REMOVE_TASK:
-            return state.filter(task => task.id !== action.payload.id);
-        case COMPLETE_TASK:
-            return state.map(task => 
-                task.id === action.payload.id 
-                ? { ...task, completed: true } 
-                : task
-            );
-        default:
-            return state;
-    }
-}
+
+export default createReducer([], (builder) => {
+    builder
+    .addCase(addTask, (state, action) => {
+        state.push({
+            id: ++id,
+            task: action.payload,
+            completed: false
+        });
+    })
+    .addCase(removeTask, (state, action) => {
+        const index = state.findIndex(task => task.id === action.payload);
+        if (index !== -1) {
+            state.splice(index, 1);
+        }
+    })
+    .addCase(completeTask, (state, action) => {
+        const task = state.find(task => task.id === action.payload);
+        if (task) {
+            task.completed = true;
+        }
+    });
+})
