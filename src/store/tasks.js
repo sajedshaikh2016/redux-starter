@@ -1,19 +1,11 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 
+// Actions
 const addTask = createAction("ADD_TASK");
 const removeTask = createAction("REMOVE_TASK");
 const completeTask = createAction("TASK_COMPLETED");
-console.log(addTask.type)
 
-
-const fetchTodos = () => async (dispatch, getState) => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-    console.log('Fetched Data:', response);
-    const task = await response.json();
-    dispatch(addTask(task.title));
-};
-
-export { addTask, removeTask, completeTask, fetchTodos };
+export { addTask, removeTask, completeTask };
 
 // Reducer
 let id = 0;
